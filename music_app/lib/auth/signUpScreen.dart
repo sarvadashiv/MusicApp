@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'package:flutter/gestures.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:music_app/auth/signInScreen.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -12,8 +14,12 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
+  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   bool _isSignInLoading = false;
   bool _isGoogleLoading = false;
   String _errorMessage = '';
@@ -60,18 +66,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
-  Future<void> _loginWithEmail() async {
+  Future<void> _signUpWithEmail() async {
     setState(() {
       _isSignInLoading = true;
       _errorMessage = '';
     });
     final email = _emailController.text;
     final password = _passwordController.text;
-
+    final confirmPassword = _confirmPasswordController.text;
+    final name = _nameController.text;
     try {
       final response = await http.post(
-        Uri.parse('https://task-4-0pfy.onrender.com'),
-        body: json.encode({'email': email, 'password': password}),
+        Uri.parse('https://task-4-0pfy.onrender.com/user/signup'),
+        body: json.encode({'name': name, 'email': email, 'password': password, 'confirmPassword': confirmPassword}),
         headers: {'Content-Type': 'application/json'},
       );
       final data = json.decode(response.body);
@@ -143,26 +150,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ],
                 ),
-                SizedBox(height: 45,),
-                Text('First Name', style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'KumbhSans')),
+                SizedBox(height: 5,),
+                Center(child: Text('Create your Account', style: TextStyle(color: Colors.white, fontFamily: 'KumbhSans', fontSize: 15),)),
+                SizedBox(height: 40,),
+                Text('Name', style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'KumbhSans')),
                 SizedBox(height: 10,),
                 TextField(
-                  controller: _emailController,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Color.fromARGB(255, 233, 188, 185),
-                    hintText: 'T y p e    h e r e',
-                    hintStyle: TextStyle(color: Color.fromARGB(80, 0, 0, 0), fontFamily: 'KumbhSans') ,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 16),
-                Text('Last Name', style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'KumbhSans')),
-                SizedBox(height: 10,),
-                TextField(
-                  controller: _emailController,
+                  controller: _nameController,
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: Color.fromARGB(255, 233, 188, 185),
@@ -193,7 +187,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 SizedBox(height: 10,),
                 TextField(
                   controller: _passwordController,
-                  obscureText: true,
+                  obscureText: !_isPasswordVisible,
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: Color.fromARGB(255, 233, 188, 185),
@@ -202,6 +196,34 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
+                    suffixIcon: IconButton(onPressed: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;  // Toggle the visibility
+                      });
+                    },
+                        icon: Icon(_isPasswordVisible ? Icons.visibility : Icons.visibility_off,color: Colors.black54,))
+                  ),
+                ),
+                SizedBox(height: 16),
+                Text('Confirm Password', style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'KumbhSans')),
+                SizedBox(height: 10,),
+                TextField(
+                  controller: _confirmPasswordController,
+                  obscureText: !_isConfirmPasswordVisible,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Color.fromARGB(255, 233, 188, 185),
+                    hintText: 'T y p e    h e r e',
+                    hintStyle: TextStyle(color: Color.fromARGB(80, 0, 0, 0), fontFamily: 'KumbhSans'),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                      suffixIcon: IconButton(onPressed: () {
+                        setState(() {
+                          _isConfirmPasswordVisible = !_isConfirmPasswordVisible;  // Toggle the visibility
+                        });
+                      },
+                          icon: Icon(_isConfirmPasswordVisible ? Icons.visibility : Icons.visibility_off,color: Colors.black54,))
                   ),
                 ),
                 SizedBox(height: 35),
@@ -217,9 +239,41 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ],
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: "Already have an account?",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15, fontFamily: 'KumbhSans'
+                            ),
+                          ),
+                          TextSpan(
+                            text: ' Sign In',
+                            style: TextStyle(
+                                color: Color.fromARGB(255, 243, 159, 89),
+                                fontSize: 15, fontWeight: FontWeight.w900, fontFamily: 'KumbhSans'
+                            ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => SignInScreen()),
+                                );
+                              },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
                 if (_errorMessage.isNotEmpty)
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    padding: const EdgeInsets.symmetric(vertical: 1.5),
                     child: Center(
                       child: Text(
                         _errorMessage,
@@ -231,7 +285,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 _isSignInLoading
                     ? Center(child: CircularProgressIndicator())
                     : ElevatedButton(
-                    onPressed: _loginWithEmail,
+                    onPressed: _signUpWithEmail,
                     child: Text("Sign Up", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'KumbhSans')),
                     style: ElevatedButton.styleFrom(backgroundColor: Color.fromARGB(255, 243, 159, 90),fixedSize: Size(50,50),shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18),  // Set your desired radius

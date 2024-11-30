@@ -15,6 +15,7 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
+  bool _isPasswordVisible = false;
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isSignInLoading = false;
@@ -70,7 +71,6 @@ class _SignInScreenState extends State<SignInScreen> {
       });
       final email = _emailController.text;
       final password = _passwordController.text;
-
       try {
         final response = await http.post(
           Uri.parse('https://task-4-0pfy.onrender.com'),
@@ -167,7 +167,7 @@ class _SignInScreenState extends State<SignInScreen> {
               SizedBox(height: 10,),
               TextField(
                 controller: _passwordController,
-                obscureText: true,
+                obscureText: !_isPasswordVisible,
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Color.fromARGB(255, 233, 188, 185),
@@ -176,6 +176,12 @@ class _SignInScreenState extends State<SignInScreen> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
+                    suffixIcon: IconButton(onPressed: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;  // Toggle the visibility
+                      });
+                    },
+                        icon: Icon(_isPasswordVisible ? Icons.visibility : Icons.visibility_off,color: Colors.black54,))
                 ),
               ),
               SizedBox(height: 16,),
