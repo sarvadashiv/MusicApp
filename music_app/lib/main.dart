@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:music_app/auth/signInScreen.dart';
+
+import 'homeScreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,7 +14,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
+      initialRoute: '/login',
+      routes: {
+        '/login': (context) => SignInScreen(),
+        '/home': (context) => HomeScreen(), // Define '/home' route
+      },
       theme: ThemeData(
         // This is the theme of your application.
         //
