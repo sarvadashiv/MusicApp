@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:music_app/auth/signUpScreen.dart';
 import 'forgotPasswordScreen.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -95,20 +96,31 @@ class _SignInScreenState extends State<SignInScreen> {
       }
     }
 
-
     @override
     Widget build (BuildContext context) {
       return Scaffold(
-        backgroundColor: Color.fromARGB(255, 29, 26, 57),
-        body: Padding(
-          padding: EdgeInsets.all(16),
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color.fromARGB(255, 29, 26, 57),
+                Color.fromARGB(255, 29, 26, 57),
+                Color.fromARGB(255, 29, 26, 57),
+                Color.fromARGB(255, 0, 0, 0),
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+        child: Padding(
+          padding: EdgeInsets.all(20),
           child: Column(
 
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SizedBox(height: 60,),
-              Image.asset('asset/logo.png',width: 200,height: 200,),
+              SizedBox(height: 50,),
+              Image.asset('assets/logo.png',width: 200,height: 200,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -116,18 +128,18 @@ class _SignInScreenState extends State<SignInScreen> {
                         text: TextSpan(
                           children: [
                             TextSpan(
-                              text: 'Welcome to ',
+                              text: 'Welcome back to our',
                               style: TextStyle(
                                 color: Color.fromARGB(255, 243, 159, 89),
-                                fontSize: 24,
+                                fontSize: 24, fontFamily: 'KumbhSans'
                               ),
                             ),
                             TextSpan(
-                              text: 'Echo!',
+                              text: ' Raag!',
                               style: TextStyle(
                                 color: Color.fromARGB(255, 243, 159, 89),
                                 fontSize: 24,
-                                fontWeight: FontWeight.bold
+                                fontWeight: FontWeight.bold, fontFamily: 'KumbhSans'
                               ),
                             ),
                           ],
@@ -135,24 +147,23 @@ class _SignInScreenState extends State<SignInScreen> {
                       ),
                   ],
                 ),
-
               SizedBox(height: 45,),
-              Text('Enter your Email address', style: TextStyle(color: Colors.white, fontSize: 15)),
+              Text('Email address', style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'KumbhSans')),
               SizedBox(height: 10,),
               TextField(
                 controller: _emailController,
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Color.fromARGB(255, 233, 188, 185),
-                  hintText: 'Type here',
-                  hintStyle: TextStyle(color: Color.fromARGB(100, 255, 255, 255)) ,
+                  hintText: 'T y p e    h e r e',
+                  hintStyle: TextStyle(color: Color.fromARGB(80, 0, 0, 0), fontFamily: 'KumbhSans') ,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
               ),
               SizedBox(height: 16),
-              Text('Enter Password', style: TextStyle(color: Colors.white, fontSize: 15)),
+              Text('Password', style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'KumbhSans')),
               SizedBox(height: 10,),
               TextField(
                 controller: _passwordController,
@@ -160,8 +171,8 @@ class _SignInScreenState extends State<SignInScreen> {
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Color.fromARGB(255, 233, 188, 185),
-                  hintText: 'Type here',
-                  hintStyle: TextStyle(color: Color.fromARGB(100, 255, 255, 255)) ,
+                  hintText: 'T y p e    h e r e',
+                  hintStyle: TextStyle(color: Color.fromARGB(80, 0, 0, 0), fontFamily: 'KumbhSans'),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -189,7 +200,6 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
-                              // Navigate to the Forgot Password screen
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(builder: (context) => ForgotPasswordScreen()),
@@ -205,7 +215,7 @@ class _SignInScreenState extends State<SignInScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SvgPicture.asset('asset/google.svg', height: 30,width: 30,),
+                  SvgPicture.asset('assets/google.svg', height: 30,width: 30,),
                   _isGoogleLoading
                        ? Center(child: CircularProgressIndicator())
                        : TextButton(
@@ -224,21 +234,20 @@ class _SignInScreenState extends State<SignInScreen> {
                           text: "Don't have an account?",
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 15,
+                            fontSize: 15, fontFamily: 'KumbhSans'
                           ),
                         ),
                         TextSpan(
                           text: ' Sign Up',
                           style: TextStyle(
                             color: Color.fromARGB(255, 243, 159, 89),
-                            fontSize: 15, fontWeight: FontWeight.w900
+                            fontSize: 15, fontWeight: FontWeight.w900, fontFamily: 'KumbhSans'
                           ),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
-                              // Navigate to the Forgot Password screen
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => ForgotPasswordScreen()),
+                                MaterialPageRoute(builder: (context) => SignUpScreen()),
                               );
                             },
                         ),
@@ -257,20 +266,19 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                   ),
                 ),
-              SizedBox(height: 60),
+              SizedBox(height: 80),
               _isSignInLoading
                   ? Center(child: CircularProgressIndicator())
-                  : Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 100),
-                    child: ElevatedButton(
+                   : ElevatedButton(
                       onPressed: _loginWithEmail,
-                      child: Text("Sign In", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-                      style: ElevatedButton.styleFrom(backgroundColor: Color.fromARGB(255, 243, 159, 90)),
+                      child: Text("Sign In", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'KumbhSans')),
+                      style: ElevatedButton.styleFrom(backgroundColor: Color.fromARGB(255, 243, 159, 90),fixedSize: Size(50,50),shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),  // Set your desired radius
+                      ),)
                     ),
-                  ),
             ],
           ),
-        ),
+        ),)
       );
     }
   }
