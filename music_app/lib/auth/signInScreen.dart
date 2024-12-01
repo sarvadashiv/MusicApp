@@ -39,7 +39,7 @@ class _SignInScreenState extends State<SignInScreen> {
       final GoogleSignInAuthentication googleAuth = await googleUser
           .authentication;
       final response = await http.post(
-        Uri.parse('https://task-4-0pfy.onrender.com'),
+        Uri.parse('https://task-4-0pfy.onrender.com/user/login'),
         body: json.encode({'id_token': googleAuth.idToken}),
         headers: {'Content-Type': 'application/json'},
       );
@@ -69,11 +69,11 @@ class _SignInScreenState extends State<SignInScreen> {
         _isSignInLoading = true;
         _errorMessage = '';
       });
-      final email = _emailController.text;
-      final password = _passwordController.text;
+      final email = _emailController.text.trim();
+      final password = _passwordController.text.trim();
       try {
         final response = await http.post(
-          Uri.parse('https://task-4-0pfy.onrender.com'),
+          Uri.parse('https://task-4-0pfy.onrender.com/user/login'),
           body: json.encode({'email': email, 'password': password}),
           headers: {'Content-Type': 'application/json'},
         );
@@ -112,7 +112,7 @@ class _SignInScreenState extends State<SignInScreen> {
               end: Alignment.bottomCenter,
             ),
           ),
-        child: Padding(
+         child: Padding(
           padding: EdgeInsets.all(20),
           child: Column(
 
@@ -128,7 +128,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         text: TextSpan(
                           children: [
                             TextSpan(
-                              text: 'Welcome back to our',
+                              text: 'Welcome back to ',
                               style: TextStyle(
                                 color: Color.fromARGB(255, 243, 159, 89),
                                 fontSize: 24, fontFamily: 'KumbhSans'

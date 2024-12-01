@@ -16,48 +16,47 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
-  final _nameController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  bool _isSignInLoading = false;
+  bool _isSignUpLoading = false;
   bool _isGoogleLoading = false;
   String _errorMessage = '';
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignIn _googleSignUp = GoogleSignIn();
 
-  Future<void> _loginWithGoogle() async {
+  Future<void> _signUpWithGoogle() async {
     setState(() {
       _isGoogleLoading = true;
       _errorMessage = '';
     });
     try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      final GoogleSignInAccount? googleUser = await _googleSignUp.signIn();
       if (googleUser == null) {
         setState(() {
-          _errorMessage = 'Google sign-in cancelled';
+          _errorMessage = 'Google sign-up cancelled';
         });
         return;
       }
-      final GoogleSignInAuthentication googleAuth = await googleUser
-          .authentication;
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
       final response = await http.post(
-        Uri.parse('https://task-4-0pfy.onrender.com'),
+        Uri.parse('https://task-4-0pfy.onrender.com/user/signup'),
         body: json.encode({'id_token': googleAuth.idToken}),
         headers: {'Content-Type': 'application/json'},
       );
-
       final data = json.decode(response.body);
       if (response.statusCode == 200) {
         Navigator.pushReplacementNamed(
             context, '/home');
       } else {
         setState(() {
-          _errorMessage = data['message'] ?? 'Google login failed';
+          _errorMessage = data['message'] ?? 'Google sign-up failed';
         });
       }
     } catch (error) {
       setState(() {
-        _errorMessage = 'Google sign-in failed. Please try again.';
+        _errorMessage = 'Google sign-up failed. Please try again.';
       });
     } finally {
       setState(() {
@@ -68,23 +67,39 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Future<void> _signUpWithEmail() async {
     setState(() {
-      _isSignInLoading = true;
+      _isSignUpLoading = true;
       _errorMessage = '';
     });
-    final email = _emailController.text;
-    final password = _passwordController.text;
-    final confirmPassword = _confirmPasswordController.text;
-    final name = _nameController.text;
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+    final confirmPassword = _confirmPasswordController.text.trim();
+    final firstName = _firstNameController.text.trim();
+    final lastName = _lastNameController.text.trim();
+    if (password != confirmPassword) {
+      setState(() {
+        _errorMessage = "Passwords don't match.";
+      });
+      _isSignUpLoading = false;
+      return;
+    }
+    if ([email, password, firstName, lastName].any((field) => field.isEmpty)) {
+      setState(() {
+        _errorMessage = 'Please fill in all fields.';
+      });
+      _isSignUpLoading = false;
+      return;
+    }
     try {
       final response = await http.post(
         Uri.parse('https://task-4-0pfy.onrender.com/user/signup'),
-        body: json.encode({'name': name, 'email': email, 'password': password, 'confirmPassword': confirmPassword}),
+        body: json.encode({'firstName': firstName,'lastName': lastName, 'email': email, 'password': password, 'confirmPassword': confirmPassword}),
         headers: {'Content-Type': 'application/json'},
       );
       final data = json.decode(response.body);
       if (response.statusCode == 200) {
         Navigator.pushReplacementNamed(context, '/home');
-      } else {
+      }
+      else {
         setState(() {
           _errorMessage = data['message'];
         });
@@ -95,7 +110,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       });
     } finally {
       setState(() {
-        _isSignInLoading = false;
+        _isSignUpLoading = false;
       });
     }
   }
@@ -131,7 +146,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       text: TextSpan(
                         children: [
                           TextSpan(
-                            text: 'Welcome to our',
+                            text: 'Welcome to ',
                             style: TextStyle(
                                 color: Color.fromARGB(255, 243, 159, 89),
                                 fontSize: 24, fontFamily: 'KumbhSans'
@@ -153,10 +168,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 SizedBox(height: 5,),
                 Center(child: Text('Create your Account', style: TextStyle(color: Colors.white, fontFamily: 'KumbhSans', fontSize: 15),)),
                 SizedBox(height: 40,),
-                Text('Name', style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'KumbhSans')),
+                Text('First Name', style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'KumbhSans')),
                 SizedBox(height: 10,),
-                TextField(
-                  controller: _nameController,
+                TextFormField(
+                  controller: _firstNameController,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Color.fromARGB(255, 233, 188, 185),
+                    hintText: 'T y p e    h e r e',
+                    hintStyle: TextStyle(color: Color.fromARGB(80, 0, 0, 0), fontFamily: 'KumbhSans') ,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10,),
+                Text('Last Name', style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'KumbhSans')),
+                SizedBox(height: 10,),
+                TextFormField(
+                  controller: _lastNameController,
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: Color.fromARGB(255, 233, 188, 185),
@@ -170,7 +200,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 SizedBox(height: 16),
                 Text('Email address', style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'KumbhSans')),
                 SizedBox(height: 10,),
-                TextField(
+                TextFormField(
                   controller: _emailController,
                   decoration: InputDecoration(
                     filled: true,
@@ -185,7 +215,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 SizedBox(height: 16),
                 Text('Password', style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'KumbhSans')),
                 SizedBox(height: 10,),
-                TextField(
+                TextFormField(
                   controller: _passwordController,
                   obscureText: !_isPasswordVisible,
                   decoration: InputDecoration(
@@ -207,7 +237,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 SizedBox(height: 16),
                 Text('Confirm Password', style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'KumbhSans')),
                 SizedBox(height: 10,),
-                TextField(
+                TextFormField(
                   controller: _confirmPasswordController,
                   obscureText: !_isConfirmPasswordVisible,
                   decoration: InputDecoration(
@@ -234,7 +264,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     _isGoogleLoading
                         ? Center(child: CircularProgressIndicator())
                         : TextButton(
-                      onPressed: _loginWithGoogle,
+                      onPressed: _isSignUpLoading ? null : _signUpWithGoogle,
                       child: Text("Continue with Google", style: TextStyle(color: Colors.white, fontSize: 20),),
                     ),
                   ],
@@ -282,10 +312,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ),
                 SizedBox(height: 45),
-                _isSignInLoading
+                _isSignUpLoading
                     ? Center(child: CircularProgressIndicator())
                     : ElevatedButton(
-                    onPressed: _signUpWithEmail,
+                    onPressed: _isSignUpLoading ? null : _signUpWithEmail,
                     child: Text("Sign Up", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'KumbhSans')),
                     style: ElevatedButton.styleFrom(backgroundColor: Color.fromARGB(255, 243, 159, 90),fixedSize: Size(50,50),shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18),  // Set your desired radius
