@@ -92,12 +92,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
     try {
       final response = await http.post(
         Uri.parse('https://task-4-0pfy.onrender.com/user/signup'),
-        body: json.encode({'firstName': firstName,'lastName': lastName, 'email': email, 'password': password, 'confirmPassword': confirmPassword}),
+        body: json.encode({'name': firstName,'email': email, 'password': password}),
         headers: {'Content-Type': 'application/json'},
       );
       final data = json.decode(response.body);
       if (response.statusCode == 200) {
-        Navigator.pushReplacementNamed(context, '/home');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: data['message']),
+        );
+        Navigator.pushReplacementNamed(context, '/login');
       }
       else {
         setState(() {

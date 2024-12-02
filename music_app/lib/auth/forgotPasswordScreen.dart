@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'dart:async';
 
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -14,17 +15,66 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   bool _isNewPasswordVisible = false;
   bool _isConfirmNewPasswordVisible = false;
   final _emailController = TextEditingController();
+  final _otpController = TextEditingController();
   final _newPasswordController = TextEditingController();
   final _confirmNewPasswordController = TextEditingController();
   bool _isLoading = false;
   String _errorMessage = '';
 
+  bool _isOtpSent = false;
+  bool _canResendOtp = false;
+  int _secondsLeft = 60;
+  Timer? _timer;
+
+  Future<void> _sendOtp() async {
+    final email = _emailController.text.trim();
+    if (email.isEmpty) {
+      setState(() {
+        _errorMessage = 'Please enter your email address.';
+      });
+      return;
+    }
+
+    setState(() {
+      _isOtpSent = true;
+      _canResendOtp = false;
+      _secondsLeft = 60;
+    });
+
+    _timer?.cancel();
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        if (_secondsLeft > 0) {
+          _secondsLeft--;
+        } else {
+          _canResendOtp = true;
+          _timer?.cancel();
+        }
+      });
+    });
+
+    // TODO: Implement the actual OTP request logic here
+  }
+
+  void _resendOtp() {
+    if (_canResendOtp) {
+      _sendOtp();
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
   Future<void> _resetPassword() async {
 
     final email = _emailController.text.trim();
+    final otp = _otpController.text.trim();
     final newPassword = _newPasswordController.text.trim();
     final confirmNewPassword = _confirmNewPasswordController.text.trim();
-    if (email.isEmpty || newPassword.isEmpty || confirmNewPassword.isEmpty) {
+    if (email.isEmpty || otp.isEmpty || newPassword.isEmpty || confirmNewPassword.isEmpty) {
       setState(() {
         _errorMessage = 'All fields are required.';
       });
@@ -43,7 +93,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     try {
       final response = await http.post(
         Uri.parse('https://task-4-0pfy.onrender.com/user/resetpassword'),
-        body: json.encode({'email': email, 'password': newPassword}),
+        body: json.encode({'email': email,'otp': otp, 'newpassword': newPassword}),
         headers: {'Content-Type': 'application/json'},
       );
       final data = json.decode(response.body);
@@ -98,7 +148,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       child: Column(
                         children: [
                           Text('Reset your password', style: TextStyle(color: Color.fromARGB(255, 243, 159, 89),
-                              fontSize: 24, fontFamily: 'KumbhSans'),),
+                              fontSize: 30, fontFamily: 'KumbhSans', fontWeight: FontWeight.w900),),
                         ],
                       ),
                     ),
@@ -119,7 +169,30 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 16),
+                    SizedBox(height: 16,),
+                    Text('OTP', style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'KumbhSans')),
+                    SizedBox(height: 10),
+                    TextField(
+                      controller: _otpController,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Color.fromARGB(255, 233, 188, 185),
+                        hintText: 'T y p e    h e r e',
+                        hintStyle: TextStyle(color: Color.fromARGB(80, 0, 0, 0), fontFamily: 'KumbhSans') ,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10,),
+                    TextButton(
+                      onPressed: _sendOtp,
+                      child: Text(
+                        _isOtpSent ? "Resend OTP ($_secondsLeft s)" : "Send OTP",
+                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      ),
+                    ),
+                    SizedBox(height: 10),
                     Text('New password', style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'KumbhSans')),
                     SizedBox(height: 10,),
                     TextField(
@@ -163,9 +236,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               icon: Icon(_isConfirmNewPasswordVisible ? Icons.visibility : Icons.visibility_off,color: Colors.black54,))
                       ),
                     ),
+                    SizedBox(height: 10),
                     if (_errorMessage.isNotEmpty)
                       Center(child: Text(_errorMessage, style: TextStyle(color: Colors.red))),
-                    SizedBox(height: 80),
+                    SizedBox(height: 70),
                     _isLoading
                         ? Center(child: CircularProgressIndicator())
                         : ElevatedButton(
