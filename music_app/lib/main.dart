@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:music_app/auth/changePasswordScreen.dart';
 import 'package:music_app/auth/signInScreen.dart';
 import 'package:music_app/auth/signUpScreen.dart';
 
@@ -20,6 +21,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/signup',
       routes: {
         '/signup': (context)=> SignUpScreen(),
+        '/newPassword': (context)=> ChangePasswordScreen(),
         '/login': (context) => SignInScreen(),
         '/home': (context) => HomeScreen(), // Define '/home' route
       },
