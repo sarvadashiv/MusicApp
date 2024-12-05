@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:music_app/auth/changePasswordScreen.dart';
 import 'package:music_app/auth/signInScreen.dart';
 import 'package:music_app/auth/signUpScreen.dart';
+import 'package:music_app/profileScreen.dart';
 
 import 'homeScreen.dart';
 
@@ -18,8 +19,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      initialRoute: '/signup',
+      initialRoute: '/profileScreen',
       routes: {
+        '/profileScreen': (context)=> ProfileScreen(),
         '/signup': (context)=> SignUpScreen(),
         '/newPassword': (context)=> ChangePasswordScreen(),
         '/login': (context) => SignInScreen(),

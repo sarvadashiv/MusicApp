@@ -56,7 +56,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       print(response.body);
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: data['message']),
+          SnackBar(content: Text(data['message'])),
         );
         Navigator.pushReplacementNamed(context, '/login');
       }

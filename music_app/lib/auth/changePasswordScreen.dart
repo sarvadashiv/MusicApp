@@ -49,16 +49,27 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         body: json.encode({"confirmPassword": confirmNewPassword, "newPassword": newPassword}),
         headers: {'Content-Type': 'application/json'},
       );
-      final data = json.decode(response.body);
+      final responseData=jsonDecode(response.body);
+      int code= response.statusCode;
       if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Verification link sent')),
-        );
-        Navigator.pushReplacementNamed(context, '/login');
+        print(responseData);
+        if(responseData['status']== 'SUCCESS'){
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Password reset successfully.'), backgroundColor: Colors.green,),
+          );
+          Navigator.pushReplacementNamed(context, '/login');
+        } else{
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(responseData['message']?? "Something went wrong"), backgroundColor: Colors.red,),
+          );
+        }
       }
       else {
+        print(responseData['status']);
+        print(responseData['message']);
+        print(code);
         setState(() {
-          _errorMessage = data['message']?? 'Link not sent!';
+          _errorMessage = responseData['message']?? 'Link not sent!';
         });
       }
     } catch (error) {
@@ -74,6 +85,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   }
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
         body: Container(
             decoration: BoxDecoration(
@@ -89,84 +101,80 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               ),
             ),
             child:Center(
-                child: Padding(
-                  padding: EdgeInsets.all(20),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Center(
-                          child: Column(
-                            children: [
-                              Text('Reset your password', style: TextStyle(color: Color.fromARGB(255, 243, 159, 89),
-                                  fontSize: 30, fontFamily: 'KumbhSans', fontWeight: FontWeight.w900),),
-                            ],
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: screenWidth > 600 ? 50.0 : 20.0,),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                                Center(
+                                  child: Text('Reset your password', style: TextStyle(color: Color.fromARGB(255, 243, 159, 89),
+                                      fontSize: screenWidth > 400 ? 30 : 24, fontFamily: 'KumbhSans', fontWeight: FontWeight.w900),),
+                                ),
+                          SizedBox(height: 15),
+                          Center(child: Text('It happens! No worries, we got your back.', style: TextStyle(color: Colors.white, fontFamily: 'KumbhSans', fontSize: screenWidth > 400 ? 20 : 16),)),
+                          SizedBox(height: 30),
+                          Text('New password', style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'KumbhSans')),
+                          SizedBox(height: 10,),
+                          TextField(
+                            controller: _newPasswordController,
+                            obscureText: !_isNewPasswordVisible,
+                            decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Color.fromARGB(255, 233, 188, 185),
+                                hintText: 'T y p e    h e r e',
+                                hintStyle: TextStyle(color: Color.fromARGB(80, 0, 0, 0), fontFamily: 'KumbhSans'),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                suffixIcon: IconButton(onPressed: () {
+                                  setState(() {
+                                    _isNewPasswordVisible = !_isNewPasswordVisible;  // Toggle the visibility
+                                  });
+                                },
+                                    icon: Icon(_isNewPasswordVisible ? Icons.visibility : Icons.visibility_off,color: Colors.black54,))
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 15,),
-                        Center(child: Text('It happens! No worries, we got your back.', style: TextStyle(color: Colors.white, fontFamily: 'KumbhSans', fontSize: 20),)),
-                        SizedBox(height: 30),
-                        Text('New password', style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'KumbhSans')),
-                        SizedBox(height: 10,),
-                        TextField(
-                          controller: _newPasswordController,
-                          obscureText: !_isNewPasswordVisible,
-                          decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Color.fromARGB(255, 233, 188, 185),
-                              hintText: 'T y p e    h e r e',
-                              hintStyle: TextStyle(color: Color.fromARGB(80, 0, 0, 0), fontFamily: 'KumbhSans'),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              suffixIcon: IconButton(onPressed: () {
-                                setState(() {
-                                  _isNewPasswordVisible = !_isNewPasswordVisible;  // Toggle the visibility
-                                });
-                              },
-                                  icon: Icon(_isNewPasswordVisible ? Icons.visibility : Icons.visibility_off,color: Colors.black54,))
+                          SizedBox(height: 16),
+                          Text('Confirm new password', style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'KumbhSans')),
+                          SizedBox(height: 10,),
+                          TextField(
+                            controller: _confirmNewPasswordController,
+                            obscureText: !_isConfirmNewPasswordVisible,
+                            decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Color.fromARGB(255, 233, 188, 185),
+                                hintText: 'T y p e    h e r e',
+                                hintStyle: TextStyle(color: Color.fromARGB(80, 0, 0, 0), fontFamily: 'KumbhSans'),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                suffixIcon: IconButton(onPressed: () {
+                                  setState(() {
+                                    _isConfirmNewPasswordVisible = !_isConfirmNewPasswordVisible;  // Toggle the visibility
+                                  });
+                                },
+                                    icon: Icon(_isConfirmNewPasswordVisible ? Icons.visibility : Icons.visibility_off,color: Colors.black54,))
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 16),
-                        Text('Confirm new password', style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'KumbhSans')),
-                        SizedBox(height: 10,),
-                        TextField(
-                          controller: _confirmNewPasswordController,
-                          obscureText: !_isConfirmNewPasswordVisible,
-                          decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Color.fromARGB(255, 233, 188, 185),
-                              hintText: 'T y p e    h e r e',
-                              hintStyle: TextStyle(color: Color.fromARGB(80, 0, 0, 0), fontFamily: 'KumbhSans'),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              suffixIcon: IconButton(onPressed: () {
-                                setState(() {
-                                  _isConfirmNewPasswordVisible = !_isConfirmNewPasswordVisible;  // Toggle the visibility
-                                });
-                              },
-                                  icon: Icon(_isConfirmNewPasswordVisible ? Icons.visibility : Icons.visibility_off,color: Colors.black54,))
+                          SizedBox(height: 10),
+                          if (_errorMessage.isNotEmpty)
+                            Center(child: Text(_errorMessage, style: TextStyle(color: Colors.red))),
+                          SizedBox(height: 70),
+                          _isLoading
+                              ? Center(child: CircularProgressIndicator())
+                              : ElevatedButton(
+                              onPressed: _resetPass,
+                              child: Text("Reset", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'KumbhSans')),
+                              style: ElevatedButton.styleFrom(backgroundColor: Color.fromARGB(255, 243, 159, 90),fixedSize: Size(screenWidth*0.85,50),shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18),  // Set your desired radius
+                              ),)
                           ),
-                        ),
-                        SizedBox(height: 10),
-                        if (_errorMessage.isNotEmpty)
-                          Center(child: Text(_errorMessage, style: TextStyle(color: Colors.red))),
-                        SizedBox(height: 70),
-                        _isLoading
-                            ? Center(child: CircularProgressIndicator())
-                            : ElevatedButton(
-                            onPressed: _resetPass,
-                            child: Text("Reset", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'KumbhSans')),
-                            style: ElevatedButton.styleFrom(backgroundColor: Color.fromARGB(255, 243, 159, 90),fixedSize: Size(50,50),shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18),  // Set your desired radius
-                            ),)
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),))
+                ))
         )
     );
   }

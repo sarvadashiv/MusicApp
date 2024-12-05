@@ -37,10 +37,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       );
       final data = json.decode(response.body);
       if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Verification link sent')),
-        );
-        //Navigator.pushReplacementNamed(context, '/newPassword');
+        final responseData=jsonDecode(response.body);
+        if(responseData['message']== 'Password reset email sent'){
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Verification link sent'), backgroundColor: Colors.green,),
+          );
+          Navigator.pushReplacementNamed(context, '/newPassword');
+        } else{
+          print(data);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(responseData['message']?? "Something went wrong"), backgroundColor: Colors.red,),
+          );
+        }
       }
       else {
         setState(() {
