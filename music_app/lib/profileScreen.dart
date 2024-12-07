@@ -9,6 +9,16 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  List<String> avatarList = [
+    'assets/avatars/avatar1.png',
+    'assets/avatars/avatar2.png',
+    'assets/avatars/avatar3.png',
+    'assets/avatars/avatar4.png',
+    'assets/avatars/avatar5.png',
+  ];
+
+  String? _selectedAvatar;
+
   String username = '';
   String email = '';
   bool isLoading = true;
@@ -135,7 +145,46 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     Navigator.pushReplacementNamed(context, '/login');
   }
+  void _showAvatarSelection() async {
+    final selectedAvatar = await showModalBottomSheet<String>(
+      context: context,
+      builder: (context) {
+        return Container(
+          height: 150,
+          padding: EdgeInsets.all(10),
+          child: GridView.builder(
+            itemCount: avatarList.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+            ),
+            itemBuilder: (context, index) {
+              return GestureDetector(
+                onTap: () => Navigator.pop(context, avatarList[index]),
+                child: CircleAvatar(
+                  child: ClipRRect(
+                  borderRadius: BorderRadius.circular(30),
+                  child: Image.asset(
+                    avatarList[index],
+                    fit: BoxFit.cover
+                  )
+                  ),
+                  radius: 30,
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
 
+    if (selectedAvatar != null) {
+      setState(() {
+        _selectedAvatar = selectedAvatar;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -171,8 +220,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         CircleAvatar(
                           radius: screenWidth * 0.125,
-                          backgroundColor: Colors.white,
-                          child: Icon(Icons.person, size: screenWidth * 0.15, color: Colors.grey),
+                        backgroundImage: _selectedAvatar!= null? AssetImage(_selectedAvatar!)
+                            : null/*AssetImage('assets/default_avatar.png')*/,
+                        child: _selectedAvatar == null
+                           ? Icon(Icons.person, size: screenWidth * 0.15, color: Colors.grey): null
                         ),
                         Positioned(
                           left: 90,
@@ -180,13 +231,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           right: 0,
                           child: GestureDetector(
                             onTap: () {
-                              // Implement avatar editing functionality here
+                              _showAvatarSelection();
                             },
                             child: Container(
                               child: Icon(
                                 Icons.edit,
                                 color: Colors.white,
-                                size: screenWidth * 0.05, // Adjust size based on screen width
+                                size: screenWidth * 0.05,
                               ),
                             ),
                           ),
@@ -194,7 +245,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ],
                     ),
                   ),
-              SizedBox(height: screenHeight * 0.05),
+              SizedBox(height: 5),
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    _selectedAvatar = null; // Reset avatar to display the default icon
+                  });
+                },
+                child: Text(
+                  'Remove',
+                  style: TextStyle(color: Colors.red, fontSize: 16),
+                ),
+              ),
+              SizedBox(height: screenHeight * 0.01),
               Row(
                 children: [
                   Text(
@@ -208,29 +271,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   IconButton(
                     icon: Icon(Icons.edit, color: Colors.white),
                     onPressed: () {
-                      setState(() => isEditing = true); // Enable editing mode
+                      setState(() => isEditing = true);
                     },
                   ),
                 ],
               ),
-              SizedBox(height: 5), // Add spacing between label and box
+              SizedBox(height: 5),
               isEditing
                   ? Column(
                 children: [
                   TextField(
                     controller: _usernameController,
                     style: TextStyle(color: Colors.white),
-                    decoration: InputDecoration(// Background color for the field
+                    decoration: InputDecoration(
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(10),
                       ),
-                      focusedBorder: OutlineInputBorder(
+                        focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.blueAccent),
                       ),
                     ),
                   ),
                   SizedBox(height: 10),
-                  ElevatedButton(
+                  TextButton(
                     onPressed: updateUsername,
                     child: Text('Save'),
                   ),
@@ -239,7 +302,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   : Container(
                 padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  border: Border.all(),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
@@ -247,24 +309,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       style: TextStyle(color: Colors.white, fontSize: 18),
                     ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
                   Text(
                     'Email',
                     style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w900),
                   ),
                   SizedBox(height: 5,),
                   Text(email, style: TextStyle(color: Colors.white, fontSize: 20)),
-              SizedBox(height: 20),
-              if (_errorMessage.isNotEmpty) ...[
-                Center(
-                  child: Text(
-                    _errorMessage,
-                    style: TextStyle(color: Colors.red, fontSize: 16),
-                  ),
-                ),
-                SizedBox(height: 10),
-              ],
-              SizedBox(height: 200),
+              SizedBox(height: 225),
               TextButton(
                 onPressed: deleteAccount,
                 child: Text('Delete Account', style: TextStyle(color: Colors.red, fontSize: 20)),
