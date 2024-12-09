@@ -9,6 +9,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  int _selectedIndex = 3;
   List<String> avatarList = [
     'assets/avatars/avatar1.png',
     'assets/avatars/avatar2.png',
@@ -183,6 +184,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() {
         _selectedAvatar = selectedAvatar;
       });
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('avatar', selectedAvatar);
+    }
+  }
+
+  void _onItemTapped(int index) {
+    if (_selectedIndex == index) return;
+
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        Navigator.pushReplacementNamed(context, '/home');
+        break;
+      case 1:
+        Navigator.pushReplacementNamed(context, '/search');
+        break;
+      case 2:
+        Navigator.pushReplacementNamed(context, '/library');
+        break;
+      case 3:
+        break;
     }
   }
 
@@ -221,7 +246,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         CircleAvatar(
                           radius: screenWidth * 0.125,
                         backgroundImage: _selectedAvatar!= null? AssetImage(_selectedAvatar!)
-                            : null/*AssetImage('assets/default_avatar.png')*/,
+                            : null,
                         child: _selectedAvatar == null
                            ? Icon(Icons.person, size: screenWidth * 0.15, color: Colors.grey): null
                         ),
@@ -249,7 +274,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               TextButton(
                 onPressed: () {
                   setState(() {
-                    _selectedAvatar = null; // Reset avatar to display the default icon
+                    _selectedAvatar = null;
                   });
                 },
                 child: Text(
@@ -263,7 +288,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Text(
                     'Username',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Color.fromARGB(255, 243, 159, 89),
                       fontSize: 22,
                       fontWeight: FontWeight.w900,
                     ),
@@ -312,7 +337,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               SizedBox(height: 10),
                   Text(
                     'Email',
-                    style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w900),
+                    style: TextStyle(color: Color.fromARGB(255, 243, 159, 89), fontSize: 22, fontWeight: FontWeight.w900),
                   ),
                   SizedBox(height: 5,),
                   Text(email, style: TextStyle(color: Colors.white, fontSize: 20)),
@@ -331,6 +356,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ),
-      ));
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Color.fromARGB(255, 233, 188, 185),
+        selectedItemColor: Color.fromARGB(255, 0, 0, 0),
+        unselectedItemColor: Color.fromARGB(255, 158, 106, 106),
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Search',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.library_music),
+            label: 'Library',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
+      )
+    );
   }
 }

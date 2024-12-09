@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:music_app/auth/changePasswordScreen.dart';
 import 'package:music_app/auth/signInScreen.dart';
 import 'package:music_app/auth/signUpScreen.dart';
+import 'package:music_app/library.dart';
 import 'package:music_app/profileScreen.dart';
+import 'package:music_app/auth/forgotPasswordScreen.dart';
+
 
 import 'homeScreen.dart';
 
@@ -19,15 +22,21 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      initialRoute: '/profileScreen',
+      initialRoute: '/profile',
       routes: {
-        '/profileScreen': (context)=> ProfileScreen(),
+        '/profile': (context)=> ProfileScreen(),
         '/signup': (context)=> SignUpScreen(),
         '/newPassword': (context)=> ChangePasswordScreen(),
         '/login': (context) => SignInScreen(),
-        '/home': (context) => HomeScreen(), // Define '/home' route
+        '/home': (context) => HomeScreen(),
+        '/library': (context)=> LibraryScreen()// Define '/home' route
       },
       theme: ThemeData(
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          backgroundColor: Color.fromARGB(255, 233, 188, 185),
+          selectedItemColor: Color.fromARGB(255, 0, 0, 0),
+          unselectedItemColor: Colors.grey, // Inactive item color
+        ),
         // This is the theme of your application.
         //
         // TRY THIS: Try running your application with "flutter run". You'll see
