@@ -3,6 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:music_app/auth/signInScreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -52,9 +53,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
         headers: {'Content-Type': 'application/json'},
       );
       final data = json.decode(response.body);
-      print(response.statusCode);
-      print(response.body);
+      //print(response.statusCode);
+      //print(response.body);
       if (response.statusCode == 200) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('userId', data['userId']);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(data['message'])),
         );
@@ -66,7 +69,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         });
       }
     } catch (error) {
-      print('Error during sign-up: $error');
+      //print('Error during sign-up: $error');
       setState(() {
         _errorMessage = 'An error occurred. Please try again.';
       });

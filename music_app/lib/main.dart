@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      initialRoute: '/profile',
+      initialRoute: '/signup',
       routes: {
         '/profile': (context)=> ProfileScreen(),
         '/signup': (context)=> SignUpScreen(),

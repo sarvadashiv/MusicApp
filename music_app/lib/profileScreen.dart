@@ -35,8 +35,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> fetchUserData() async {
     try {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getString('userId');
+
+      if (userId == null) {
+        _showErrorMessage('User ID not found. Please log in again.');
+        return;
+      }
+
       final response = await http.get(
-        Uri.parse('https://your-backend-url.com/user/profile'),
+        Uri.parse('https://task-4-0pfy.onrender.com/profile/userId=$userId'),
         headers: {'Content-Type': 'application/json'},
       );
 

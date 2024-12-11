@@ -29,9 +29,12 @@ class _LibraryScreenState extends State<LibraryScreen> {
   }
 
   Future<void> _fetchPlaylists() async {
+
     try {
-      final response = await http.get(Uri.parse('https://your-backend.com/api/playlists'));
+      final response = await http.get(Uri.parse('https://task-4-0pfy.onrender.com/all'));
+      List<dynamic> data = json.decode(response.body);
       if (response.statusCode == 200) {
+        print(data);
         setState(() {
           playlists = json.decode(response.body);
           isLoading = false;
@@ -44,6 +47,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
         isLoading = false;
       });
       print('Error: $e');
+
     }
   }
 
@@ -109,6 +113,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                 ],
               ),
             ),
+            SizedBox(height: 15),
             Expanded(
                 child: isLoading
                     ? const Center(
@@ -124,24 +129,38 @@ class _LibraryScreenState extends State<LibraryScreen> {
                   ),
                 )
                     : ListView.builder(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(0.0),
                   itemCount: playlists.length,
                   itemBuilder: (context, index) {
                     final playlist = playlists[index];
                     return Card(
-                      color: Color.fromARGB(255, 39, 37, 66),
-                      margin: const EdgeInsets.symmetric(vertical: 8.0),
+                      color: Colors.transparent,
+                      elevation: 0,
+                      margin: const EdgeInsets.symmetric(vertical: 2.0),
                       child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundImage: NetworkImage(playlist['image']),
+                        leading: Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            image: playlist['image'] != null
+                                ? DecorationImage(
+                              image: NetworkImage(playlist['image']),
+                              fit: BoxFit.cover,
+                            )
+                                : null,
+                            color: Colors.grey,
+                          ),
+                          child: playlist['image'] == null
+                              ? Icon(Icons.music_note, color: Colors.white)
+                              : null,
                         ),
                         title: Text(
-                          playlist['name'],
-                          style: const TextStyle(color: Colors.white),
+                          playlist['name'] ?? 'Unknown Playlist',
+                          style: const TextStyle(color: Colors.white, fontFamily: 'KumbhSans', fontWeight: FontWeight.w700),
                         ),
                         subtitle: Text(
-                          '${playlist['songCount']} songs',
-                          style: const TextStyle(color: Colors.grey),
+                          '${playlist['songCount'] ?? 0} songs',
+                          style: const TextStyle(color: Colors.grey, fontFamily: 'KumbhSans', fontWeight: FontWeight.w700),
                         ),
                         onTap: () {
                           // Handle playlist tap
