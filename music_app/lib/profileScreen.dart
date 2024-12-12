@@ -148,14 +148,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void logout() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.clear();  // Clear tokens and user data
+    await prefs.clear();
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Logged out successfully')),
     );
 
-    Navigator.pushReplacementNamed(context, '/login');
+    Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
   }
+
   void _showAvatarSelection() async {
     final selectedAvatar = await showModalBottomSheet<String>(
       context: context,

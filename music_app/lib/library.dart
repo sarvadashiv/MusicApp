@@ -58,7 +58,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
   Future<void> _deletePlaylist(String playlistId) async {
     try {
       final response = await http.delete(
-        Uri.parse('https://task-4-0pfy.onrender.com/delete/$playlistId'),
+        Uri.parse('https://task-4-0pfy.onrender.com/playlist/$playlistId'),
       );
 
       if (response.statusCode == 200) {

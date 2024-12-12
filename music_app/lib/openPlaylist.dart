@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class OpenPlaylist extends StatefulWidget {
   final String playlistName;
@@ -104,18 +106,40 @@ class _OpenPlaylistState extends State<OpenPlaylist> {
                         itemBuilder: (context, index) {
                           final song = widget.songs[index];
                           return Dismissible(
-                            key: Key(song['id'].toString()), // Provide a unique key for each item
-                            direction: DismissDirection.endToStart, // Allow swipe only from right to left
-                            onDismissed: (direction) {
-                              setState(() {
-                                widget.songs.removeAt(index); // Remove the song from the list
-                              });
+                            key: Key(song['id'].toString()),
+                            direction: DismissDirection.endToStart,
+                            onDismissed: (direction) async {
+                              final songId = song['id'];
+                              final playlistId = widget.playlistName;
 
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('${song['title'] ?? 'Song'} removed'),
-                                ),
+                              final response = await http.delete(
+                                Uri.parse('https://task-4-0pfy.onrender.com/remove-song'),
+                                headers: {
+                                  'Content-Type': 'application/json',
+                                },
+                                body: jsonEncode({
+                                  'SongId': songId,
+                                  'PlaylistId': playlistId,
+                                }),
                               );
+
+                              if (response.statusCode == 200) {
+                                setState(() {
+                                  widget.songs.removeAt(index);
+                                });
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('${song['title'] ?? 'Song'} removed successfully'),
+                                  ),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Failed to remove ${song['title'] ?? 'Song'}'),
+                                  ),
+                                );
+                              }
                             },
                             background: Container(
                               color: Colors.red,
@@ -166,15 +190,13 @@ class _OpenPlaylistState extends State<OpenPlaylist> {
                                   ),
                                 ),
                                 onTap: () {
-                                  // Handle song play functionality
-                                  print('Playing song: ${song['title']}');
+                                  /*print('Playing song: ${song['title']}')*/;
                                 },
                               ),
                             ),
                           );
                         },
                       ),
-
                     ),
                   ],
                 ),
