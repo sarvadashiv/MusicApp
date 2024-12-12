@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
         '/signup': (context)=> SignUpScreen(),
         '/newPassword': (context)=> ChangePasswordScreen(),
         '/login': (context) => SignInScreen(),
-        '/library': (context)=> LibraryScreen()// Define '/home' route
+        '/library': (context)=> LibraryScreen()
       },
       theme: ThemeData(
         bottomNavigationBarTheme: BottomNavigationBarThemeData(

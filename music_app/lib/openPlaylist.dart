@@ -103,53 +103,78 @@ class _OpenPlaylistState extends State<OpenPlaylist> {
                         itemCount: widget.songs.length,
                         itemBuilder: (context, index) {
                           final song = widget.songs[index];
-                          return Card(
-                            color: Colors.transparent,
-                            elevation: 0,
-                            margin: const EdgeInsets.symmetric(vertical: 1.0),
-                            child: ListTile(
-                              leading: Container(
-                                width: 50,
-                                height: 50,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: NetworkImage(song['image']),
-                                    fit: BoxFit.cover,
+                          return Dismissible(
+                            key: Key(song['id'].toString()), // Provide a unique key for each item
+                            direction: DismissDirection.endToStart, // Allow swipe only from right to left
+                            onDismissed: (direction) {
+                              setState(() {
+                                widget.songs.removeAt(index); // Remove the song from the list
+                              });
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('${song['title'] ?? 'Song'} removed'),
+                                ),
+                              );
+                            },
+                            background: Container(
+                              color: Colors.red,
+                              alignment: Alignment.centerRight,
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              child: const Icon(
+                                Icons.delete,
+                                color: Colors.white,
+                              ),
+                            ),
+                            child: Card(
+                              color: Colors.transparent,
+                              elevation: 0,
+                              margin: const EdgeInsets.symmetric(vertical: 1.0),
+                              child: ListTile(
+                                leading: Container(
+                                  width: 50,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: NetworkImage(song['image']),
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              title: Text(
-                                song['title'] ?? 'Unknown Song',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontFamily: 'KumbhSans',
-                                  fontWeight: FontWeight.w700,
+                                title: Text(
+                                  song['title'] ?? 'Unknown Song',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: 'KumbhSans',
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
-                              ),
-                              subtitle: Text(
-                                song['artist'] ?? 'Unknown Artist',
-                                style: const TextStyle(
-                                  color: Color.fromARGB(255, 243, 159, 89),
-                                  fontFamily: 'KumbhSans',
-                                  fontWeight: FontWeight.w500,
+                                subtitle: Text(
+                                  song['artist'] ?? 'Unknown Artist',
+                                  style: const TextStyle(
+                                    color: Color.fromARGB(255, 243, 159, 89),
+                                    fontFamily: 'KumbhSans',
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
-                              ),
-                              trailing: Text(
-                                _formatDuration(song['duration']),
-                                style: const TextStyle(
-                                  color: Color.fromARGB(255, 233, 188, 185),
-                                  fontFamily: 'KumbhSans',
-                                  fontWeight: FontWeight.w700,
+                                trailing: Text(
+                                  _formatDuration(song['duration']),
+                                  style: const TextStyle(
+                                    color: Color.fromARGB(255, 233, 188, 185),
+                                    fontFamily: 'KumbhSans',
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
+                                onTap: () {
+                                  // Handle song play functionality
+                                  print('Playing song: ${song['title']}');
+                                },
                               ),
-                              onTap: () {
-                                // Handle song play functionality
-                                print('Playing song: ${song['title']}');
-                              },
                             ),
                           );
                         },
                       ),
+
                     ),
                   ],
                 ),
