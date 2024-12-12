@@ -4,10 +4,7 @@ import 'package:music_app/auth/signInScreen.dart';
 import 'package:music_app/auth/signUpScreen.dart';
 import 'package:music_app/library.dart';
 import 'package:music_app/profileScreen.dart';
-import 'package:music_app/auth/forgotPasswordScreen.dart';
 
-
-import 'homeScreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -28,7 +25,6 @@ class MyApp extends StatelessWidget {
         '/signup': (context)=> SignUpScreen(),
         '/newPassword': (context)=> ChangePasswordScreen(),
         '/login': (context) => SignInScreen(),
-        '/home': (context) => HomeScreen(),
         '/library': (context)=> LibraryScreen()// Define '/home' route
       },
       theme: ThemeData(

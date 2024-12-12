@@ -53,15 +53,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
         headers: {'Content-Type': 'application/json'},
       );
       final data = json.decode(response.body);
-      //print(response.statusCode);
-      //print(response.body);
+      print(response.statusCode);
+      print(response.body);
       if (response.statusCode == 200) {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('userId', data['userId']);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(data['message'])),
-        );
-        Navigator.pushReplacementNamed(context, '/login');
+        final userId = data['userId'];
+        if (userId != null) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('userId', userId);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(data['message'] ?? 'Sign-up successful!')),
+          );
+          Navigator.pushReplacementNamed(context, '/login');
+        } else {
+          setState(() {
+            _errorMessage = 'Unexpected error: userId is null.';
+          });
+        }
       }
       else {
         setState(() {
@@ -69,7 +76,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         });
       }
     } catch (error) {
-      //print('Error during sign-up: $error');
+      print('Error during sign-up: $error');
       setState(() {
         _errorMessage = 'An error occurred. Please try again.';
       });

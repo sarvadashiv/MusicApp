@@ -50,12 +50,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+        print(response.statusCode);
         setState(() {
           username = data['username'];
           email = data['email'];
           _usernameController.text = username;
         });
       } else {
+        print(response.statusCode);
         _showErrorMessage('Failed to load profile data');
       }
     } catch (error) {

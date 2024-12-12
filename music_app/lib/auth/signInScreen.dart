@@ -3,6 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:music_app/auth/signUpScreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'forgotPasswordScreen.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -34,7 +35,20 @@ class _SignInScreenState extends State<SignInScreen> {
         );
         final data = json.decode(response.body);
         if (response.statusCode == 200) {
-          Navigator.pushReplacementNamed(context, '/home');
+          final userId = data['data']['_id'];
+          print(data);
+          if (userId != null) {
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setString('userId', userId);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(data['message'] ?? 'Sign-In successful!')),
+            );
+            Navigator.pushReplacementNamed(context, '/profile');
+          } else {
+            setState(() {
+              _errorMessage = 'Unexpected error: userId is null.';
+            });
+          }
         } else {
           setState(() {
             _errorMessage = data['message'];
