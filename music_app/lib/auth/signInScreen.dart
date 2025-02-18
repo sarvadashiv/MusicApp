@@ -36,6 +36,7 @@ class _SignInScreenState extends State<SignInScreen> {
         final data = json.decode(response.body);
         if (response.statusCode == 200) {
           final userId = data['data']['_id'];
+          print(userId);
           print(data);
           if (userId != null) {
             final prefs = await SharedPreferences.getInstance();
@@ -43,7 +44,7 @@ class _SignInScreenState extends State<SignInScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(data['message'] ?? 'Sign-In successful!')),
             );
-            Navigator.pushReplacementNamed(context, '/profile');
+            Navigator.pushNamedAndRemoveUntil(context, '/home', (route)=> false);
           } else {
             setState(() {
               _errorMessage = 'Unexpected error: userId is null.';
@@ -72,7 +73,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
       return Scaffold(
         body: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [
                 Color.fromARGB(255, 29, 26, 57),
@@ -98,14 +99,14 @@ class _SignInScreenState extends State<SignInScreen> {
                                 TextSpan(
                                   text: 'Welcome back to ',
                                   style: TextStyle(
-                                    color: Color.fromARGB(255, 243, 159, 89),
+                                    color: const Color.fromARGB(255, 243, 159, 89),
                                     fontSize: screenWidth*0.06, fontFamily: 'KumbhSans'
                                   ),
                                 ),
                                 TextSpan(
                                   text: ' Raag!',
                                   style: TextStyle(
-                                    color: Color.fromARGB(255, 243, 159, 89),
+                                    color: const Color.fromARGB(255, 243, 159, 89),
                                     fontSize: screenWidth*0.06,
                                     fontWeight: FontWeight.bold, fontFamily: 'KumbhSans'
                                   ),
@@ -114,32 +115,32 @@ class _SignInScreenState extends State<SignInScreen> {
                             ),
                           ),
                         ),
-                SizedBox(height: 45,),
-                Text('Email address', style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'KumbhSans')),
-                SizedBox(height: 10,),
+                const SizedBox(height: 45,),
+                const Text('Email address', style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'KumbhSans')),
+                const SizedBox(height: 10,),
                 TextField(
                   controller: _emailController,
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: Color.fromARGB(255, 233, 188, 185),
+                    fillColor: const Color.fromARGB(255, 233, 188, 185),
                     hintText: 'T y p e    h e r e',
-                    hintStyle: TextStyle(color: Color.fromARGB(80, 0, 0, 0), fontFamily: 'KumbhSans') ,
+                    hintStyle: const TextStyle(color: Color.fromARGB(80, 0, 0, 0), fontFamily: 'KumbhSans') ,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                 ),
-                SizedBox(height: 16),
-                Text('Password', style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'KumbhSans')),
-                SizedBox(height: 10,),
+                const SizedBox(height: 16),
+                const Text('Password', style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'KumbhSans')),
+                const SizedBox(height: 10,),
                 TextField(
                   controller: _passwordController,
                   obscureText: !_isPasswordVisible,
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: Color.fromARGB(255, 233, 188, 185),
+                    fillColor: const Color.fromARGB(255, 233, 188, 185),
                     hintText: 'T y p e    h e r e',
-                    hintStyle: TextStyle(color: Color.fromARGB(80, 0, 0, 0), fontFamily: 'KumbhSans'),
+                    hintStyle: const TextStyle(color: Color.fromARGB(80, 0, 0, 0), fontFamily: 'KumbhSans'),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -151,14 +152,14 @@ class _SignInScreenState extends State<SignInScreen> {
                           icon: Icon(_isPasswordVisible ? Icons.visibility : Icons.visibility_off,color: Colors.black54,))
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     RichText(
                       text: TextSpan(
                         children: [
-                          TextSpan(
+                          const TextSpan(
                             text: 'Forgot Password?',
                             style: TextStyle(
                               color: Colors.white,
@@ -167,7 +168,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                           TextSpan(
                             text: ' Click here',
-                            style: TextStyle(
+                            style: const TextStyle(
                                 color: Color.fromARGB(255, 243, 159, 89),
                                 fontSize: 15,
                             ),
@@ -175,7 +176,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               ..onTap = () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => ForgotPasswordScreen()),
+                                  MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()),
                                 );
                               },
                           ),
@@ -184,14 +185,14 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                   ],
                 ),
-                SizedBox(height: 10,),
+                const SizedBox(height: 10,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     RichText(
                       text: TextSpan(
                         children: [
-                          TextSpan(
+                          const TextSpan(
                             text: "Don't have an account?",
                             style: TextStyle(
                               color: Colors.white,
@@ -200,7 +201,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                           TextSpan(
                             text: ' Sign Up',
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Color.fromARGB(255, 243, 159, 89),
                               fontSize: 15, fontWeight: FontWeight.w900, fontFamily: 'KumbhSans'
                             ),
@@ -208,7 +209,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               ..onTap = () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => SignUpScreen()),
+                                  MaterialPageRoute(builder: (context) => const SignUpScreen()),
                                 );
                               },
                           ),
@@ -217,25 +218,25 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                   ],
                 ),
-                SizedBox(height: 80),
+                const SizedBox(height: 80),
                 if (_errorMessage.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Center(
                       child: Text(
                         _errorMessage,
-                        style: TextStyle(color: Colors.red),
+                        style: const TextStyle(color: Colors.red),
                       ),
                     ),
                   ),
                 _isSignInLoading
-                    ? Center(child: CircularProgressIndicator())
+                    ? const Center(child: CircularProgressIndicator())
                      : ElevatedButton(
                         onPressed: _loginWithEmail,
-                        child: Text("Sign In", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'KumbhSans')),
-                        style: ElevatedButton.styleFrom(backgroundColor: Color.fromARGB(255, 243, 159, 90),fixedSize: Size(50,50),shape: RoundedRectangleBorder(
+                        style: ElevatedButton.styleFrom(backgroundColor: const Color.fromARGB(255, 243, 159, 90),fixedSize: const Size(50,50),shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18),  // Set your desired radius
-                        ),)
+                        ),),
+                        child: const Text("Sign In", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'KumbhSans'))
                       ),
               ],
             ),

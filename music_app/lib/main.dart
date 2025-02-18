@@ -4,6 +4,9 @@ import 'package:music_app/auth/signInScreen.dart';
 import 'package:music_app/auth/signUpScreen.dart';
 import 'package:music_app/library.dart';
 import 'package:music_app/profileScreen.dart';
+import 'package:music_app/searchPage.dart';
+
+import 'homeScreen.dart';
 
 
 void main() {
@@ -21,14 +24,16 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       initialRoute: '/signup',
       routes: {
-        '/profile': (context)=> ProfileScreen(),
-        '/signup': (context)=> SignUpScreen(),
-        '/newPassword': (context)=> ChangePasswordScreen(),
-        '/login': (context) => SignInScreen(),
-        '/library': (context)=> LibraryScreen()
+        '/search': (context)=> const SearchPage(),
+        '/home': (context)=> const HomeScreen(),
+        '/profile': (context)=> const ProfileScreen(),
+        '/signup': (context)=> const SignUpScreen(),
+        '/newPassword': (context)=> const ChangePasswordScreen(),
+        '/login': (context) => const SignInScreen(),
+        '/library': (context)=> LibraryScreen(onNavigateToSearch: () {  },)
       },
       theme: ThemeData(
-        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           backgroundColor: Color.fromARGB(255, 233, 188, 185),
           selectedItemColor: Color.fromARGB(255, 0, 0, 0),
           unselectedItemColor: Colors.grey, // Inactive item color

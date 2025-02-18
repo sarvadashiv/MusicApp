@@ -7,7 +7,7 @@ class OpenPlaylist extends StatefulWidget {
   final String playlistDescription;
   final List<dynamic> songs;
 
-  OpenPlaylist({
+  const OpenPlaylist({super.key, 
     required this.playlistName,
     required this.playlistDescription,
     required this.songs,
@@ -190,7 +190,7 @@ class _OpenPlaylistState extends State<OpenPlaylist> {
                                   ),
                                 ),
                                 onTap: () {
-                                  /*print('Playing song: ${song['title']}')*/;
+                                  /*print('Playing song: ${song['title']}')*/
                                 },
                               ),
                             ),
@@ -207,9 +207,9 @@ class _OpenPlaylistState extends State<OpenPlaylist> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Color.fromARGB(255, 233, 188, 185),
-        selectedItemColor: Color.fromARGB(255, 0, 0, 0),
-        unselectedItemColor: Color.fromARGB(255, 158, 106, 106),
+        backgroundColor: const Color.fromARGB(255, 233, 188, 185),
+        selectedItemColor: const Color.fromARGB(255, 0, 0, 0),
+        unselectedItemColor: const Color.fromARGB(255, 158, 106, 106),
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const [

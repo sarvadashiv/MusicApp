@@ -3,7 +3,6 @@ import 'package:flutter/gestures.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:music_app/auth/signInScreen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -28,10 +27,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
       _isSignUpLoading = true;
       _errorMessage = '';
     });
+
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
     final confirmPassword = _confirmPasswordController.text.trim();
     final name = _nameController.text.trim();
+
     if (password != confirmPassword) {
       setState(() {
         _errorMessage = "Passwords don't match.";
@@ -39,6 +40,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       });
       return;
     }
+
     if ([email, password, name].any((field) => field.isEmpty)) {
       setState(() {
         _errorMessage = 'Please fill in all fields.';
@@ -46,31 +48,28 @@ class _SignUpScreenState extends State<SignUpScreen> {
       _isSignUpLoading = false;
       return;
     }
+
     try {
       final response = await http.post(
         Uri.parse("https://task-4-0pfy.onrender.com/user/signup"),
-        body: json.encode({'name': name,'email': email, 'password': password}),
+        body: json.encode({
+          'name': name,
+          'email': email,
+          'password': password,
+        }),
         headers: {'Content-Type': 'application/json'},
       );
+
       final data = json.decode(response.body);
       print(response.statusCode);
       print(response.body);
+
       if (response.statusCode == 200) {
-        final userId = data['userId'];
-        if (userId != null) {
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('userId', userId);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(data['message'] ?? 'Sign-up successful!')),
-          );
-          Navigator.pushReplacementNamed(context, '/login');
-        } else {
-          setState(() {
-            _errorMessage = 'Unexpected error: userId is null.';
-          });
-        }
-      }
-      else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(data['message'] ?? 'Sign-up successful!')),
+        );
+        Navigator.pushReplacementNamed(context, '/login');
+      } else {
         setState(() {
           _errorMessage = data['message'];
         });
@@ -86,7 +85,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
       });
     }
   }
-
   @override
   Widget build (BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -94,7 +92,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Scaffold(
         body: SafeArea(
           child: Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [
                   Color.fromARGB(255, 29, 26, 57),
@@ -129,14 +127,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 TextSpan(
                                   text: 'Welcome to ',
                                   style: TextStyle(
-                                      color: Color.fromARGB(255, 243, 159, 89),
+                                      color: const Color.fromARGB(255, 243, 159, 89),
                                       fontSize: screenWidth*0.06, fontFamily: 'KumbhSans'
                                   ),
                                 ),
                                 TextSpan(
                                   text: ' Raag!',
                                   style: TextStyle(
-                                      color: Color.fromARGB(255, 243, 159, 89),
+                                      color: const Color.fromARGB(255, 243, 159, 89),
                                       fontSize: screenWidth*0.06,
                                       fontWeight: FontWeight.bold, fontFamily: 'KumbhSans'
                                   ),
@@ -157,9 +155,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       controller: _nameController,
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: Color.fromARGB(255, 233, 188, 185),
+                        fillColor: const Color.fromARGB(255, 233, 188, 185),
                         hintText: 'T y p e    h e r e',
-                        hintStyle: TextStyle(color: Color.fromARGB(80, 0, 0, 0), fontFamily: 'KumbhSans') ,
+                        hintStyle: const TextStyle(color: Color.fromARGB(80, 0, 0, 0), fontFamily: 'KumbhSans') ,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -172,9 +170,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       controller: _emailController,
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: Color.fromARGB(255, 233, 188, 185),
+                        fillColor: const Color.fromARGB(255, 233, 188, 185),
                         hintText: 'T y p e    h e r e',
-                        hintStyle: TextStyle(color: Color.fromARGB(80, 0, 0, 0), fontFamily: 'KumbhSans') ,
+                        hintStyle: const TextStyle(color: Color.fromARGB(80, 0, 0, 0), fontFamily: 'KumbhSans') ,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -188,9 +186,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       obscureText: !_isPasswordVisible,
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: Color.fromARGB(255, 233, 188, 185),
+                        fillColor: const Color.fromARGB(255, 233, 188, 185),
                         hintText: 'T y p e    h e r e',
-                        hintStyle: TextStyle(color: Color.fromARGB(80, 0, 0, 0), fontFamily: 'KumbhSans'),
+                        hintStyle: const TextStyle(color: Color.fromARGB(80, 0, 0, 0), fontFamily: 'KumbhSans'),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -210,9 +208,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       obscureText: !_isConfirmPasswordVisible,
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: Color.fromARGB(255, 233, 188, 185),
+                        fillColor: const Color.fromARGB(255, 233, 188, 185),
                         hintText: 'T y p e    h e r e',
-                        hintStyle: TextStyle(color: Color.fromARGB(80, 0, 0, 0), fontFamily: 'KumbhSans'),
+                        hintStyle: const TextStyle(color: Color.fromARGB(80, 0, 0, 0), fontFamily: 'KumbhSans'),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -229,7 +227,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           child: RichText(
                             text: TextSpan(
                               children: [
-                                TextSpan(
+                                const TextSpan(
                                   text: "Already have an account?",
                                   style: TextStyle(
                                       color: Colors.white,
@@ -238,7 +236,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 ),
                                 TextSpan(
                                   text: ' Sign In',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       color: Color.fromARGB(255, 243, 159, 89),
                                       fontSize: 15, fontWeight: FontWeight.w900, fontFamily: 'KumbhSans'
                                   ),
@@ -246,7 +244,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     ..onTap = () {
                                       Navigator.push(
                                         context,
-                                        MaterialPageRoute(builder: (context) => SignInScreen()),
+                                        MaterialPageRoute(builder: (context) => const SignInScreen()),
                                       );
                                     },
                                 ),
@@ -260,19 +258,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         child: Center(
                           child: Text(
                             _errorMessage,
-                            style: TextStyle(color: Colors.red),
+                            style: const TextStyle(color: Colors.red),
                           ),
                         ),
                       ),
                     SizedBox(height: screenHeight*0.06),
                     _isSignUpLoading
-                        ? Center(child: CircularProgressIndicator())
+                        ? const Center(child: CircularProgressIndicator())
                         : ElevatedButton(
                         onPressed: _isSignUpLoading ? null : _signUpWithEmail,
-                        child: Text("Sign Up", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'KumbhSans')),
-                        style: ElevatedButton.styleFrom(backgroundColor: Color.fromARGB(255, 243, 159, 90),fixedSize: Size(screenWidth*0.84,screenHeight*0.06),shape: RoundedRectangleBorder(
+                        style: ElevatedButton.styleFrom(backgroundColor: const Color.fromARGB(255, 243, 159, 90),fixedSize: Size(screenWidth*0.84,screenHeight*0.06),shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18),
-                        ),)
+                        ),),
+                        child: const Text("Sign Up", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'KumbhSans'))
                     ),
                   ],
                 ),

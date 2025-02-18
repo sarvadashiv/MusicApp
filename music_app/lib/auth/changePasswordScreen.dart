@@ -55,7 +55,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         print(responseData);
         if(responseData['status']== 'SUCCESS'){
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Password reset successfully.'), backgroundColor: Colors.green,),
+            const SnackBar(content: Text('Password reset successfully.'), backgroundColor: Colors.green,),
           );
           Navigator.pushReplacementNamed(context, '/login');
         } else{
@@ -88,7 +88,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
         body: Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [
                   Color.fromARGB(255, 29, 26, 57),
@@ -109,22 +109,22 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                                 Center(
-                                  child: Text('Reset your password', style: TextStyle(color: Color.fromARGB(255, 243, 159, 89),
+                                  child: Text('Reset your password', style: TextStyle(color: const Color.fromARGB(255, 243, 159, 89),
                                       fontSize: screenWidth > 400 ? 30 : 24, fontFamily: 'KumbhSans', fontWeight: FontWeight.w900),),
                                 ),
-                          SizedBox(height: 15),
+                          const SizedBox(height: 15),
                           Center(child: Text('It happens! No worries, we got your back.', style: TextStyle(color: Colors.white, fontFamily: 'KumbhSans', fontSize: screenWidth > 400 ? 20 : 16),)),
-                          SizedBox(height: 30),
-                          Text('New password', style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'KumbhSans')),
-                          SizedBox(height: 10,),
+                          const SizedBox(height: 30),
+                          const Text('New password', style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'KumbhSans')),
+                          const SizedBox(height: 10,),
                           TextField(
                             controller: _newPasswordController,
                             obscureText: !_isNewPasswordVisible,
                             decoration: InputDecoration(
                                 filled: true,
-                                fillColor: Color.fromARGB(255, 233, 188, 185),
+                                fillColor: const Color.fromARGB(255, 233, 188, 185),
                                 hintText: 'T y p e    h e r e',
-                                hintStyle: TextStyle(color: Color.fromARGB(80, 0, 0, 0), fontFamily: 'KumbhSans'),
+                                hintStyle: const TextStyle(color: Color.fromARGB(80, 0, 0, 0), fontFamily: 'KumbhSans'),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -136,17 +136,17 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                     icon: Icon(_isNewPasswordVisible ? Icons.visibility : Icons.visibility_off,color: Colors.black54,))
                             ),
                           ),
-                          SizedBox(height: 16),
-                          Text('Confirm new password', style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'KumbhSans')),
-                          SizedBox(height: 10,),
+                          const SizedBox(height: 16),
+                          const Text('Confirm new password', style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'KumbhSans')),
+                          const SizedBox(height: 10,),
                           TextField(
                             controller: _confirmNewPasswordController,
                             obscureText: !_isConfirmNewPasswordVisible,
                             decoration: InputDecoration(
                                 filled: true,
-                                fillColor: Color.fromARGB(255, 233, 188, 185),
+                                fillColor: const Color.fromARGB(255, 233, 188, 185),
                                 hintText: 'T y p e    h e r e',
-                                hintStyle: TextStyle(color: Color.fromARGB(80, 0, 0, 0), fontFamily: 'KumbhSans'),
+                                hintStyle: const TextStyle(color: Color.fromARGB(80, 0, 0, 0), fontFamily: 'KumbhSans'),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -158,18 +158,18 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                     icon: Icon(_isConfirmNewPasswordVisible ? Icons.visibility : Icons.visibility_off,color: Colors.black54,))
                             ),
                           ),
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           if (_errorMessage.isNotEmpty)
-                            Center(child: Text(_errorMessage, style: TextStyle(color: Colors.red))),
-                          SizedBox(height: 70),
+                            Center(child: Text(_errorMessage, style: const TextStyle(color: Colors.red))),
+                          const SizedBox(height: 70),
                           _isLoading
-                              ? Center(child: CircularProgressIndicator())
+                              ? const Center(child: CircularProgressIndicator())
                               : ElevatedButton(
                               onPressed: _resetPass,
-                              child: Text("Reset", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'KumbhSans')),
-                              style: ElevatedButton.styleFrom(backgroundColor: Color.fromARGB(255, 243, 159, 90),fixedSize: Size(screenWidth*0.85,50),shape: RoundedRectangleBorder(
+                              style: ElevatedButton.styleFrom(backgroundColor: const Color.fromARGB(255, 243, 159, 90),fixedSize: Size(screenWidth*0.85,50),shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(18),  // Set your desired radius
-                              ),)
+                              ),),
+                              child: const Text("Reset", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'KumbhSans'))
                           ),
                         ],
                       ),

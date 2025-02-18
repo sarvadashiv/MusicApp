@@ -4,12 +4,13 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  int _selectedIndex = 3;
   List<String> avatarList = [
     'assets/avatars/avatar1.png',
     'assets/avatars/avatar2.png',
@@ -25,7 +26,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool isLoading = true;
   String _errorMessage = '';
   bool isEditing = false;
-  TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
 
   @override
   void initState() {
@@ -37,7 +38,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final userId = prefs.getString('userId');
-
+      print(userId);
       if (userId == null) {
         _showErrorMessage('User ID not found. Please log in again.');
         return;
@@ -82,7 +83,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           isEditing = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Username updated successfully')),
+          const SnackBar(content: Text('Username updated successfully')),
         );
       } else {
         _showErrorMessage('Failed to update username');
@@ -105,7 +106,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
 
       if (response.statusCode == 200) {
-        Navigator.pushReplacementNamed(context, '/signup');
+        Navigator.pushNamedAndRemoveUntil(context, '/signup', (route) => false);
       } else {
         _showErrorMessage('Failed to delete account');
       }
@@ -121,7 +122,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _errorMessage = message;
     });
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message, style: TextStyle(color: Colors.red))),
+      SnackBar(content: Text(message, style: const TextStyle(color: Colors.red))),
     );
   }
 
@@ -129,17 +130,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Confirm Deletion'),
-        content: Text('Are you sure you want to delete your account?'),
+        title: const Text('Confirm Deletion'),
+        content: const Text('Are you sure you want to delete your account?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text('Delete'),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('Delete'),
           ),
         ],
       ),
@@ -151,7 +152,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     await prefs.clear();
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Logged out successfully')),
+      const SnackBar(content: Text('Logged out successfully')),
     );
 
     Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
@@ -163,10 +164,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (context) {
         return Container(
           height: 150,
-          padding: EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
           child: GridView.builder(
             itemCount: avatarList.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 4,
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
@@ -175,6 +176,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               return GestureDetector(
                 onTap: () => Navigator.pop(context, avatarList[index]),
                 child: CircleAvatar(
+                  radius: 30,
                   child: ClipRRect(
                   borderRadius: BorderRadius.circular(30),
                   child: Image.asset(
@@ -182,7 +184,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     fit: BoxFit.cover
                   )
                   ),
-                  radius: 30,
                 ),
               );
             },
@@ -200,28 +201,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  void _onItemTapped(int index) {
-    if (_selectedIndex == index) return;
-
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    switch (index) {
-      case 0:
-        Navigator.pushReplacementNamed(context, '/home');
-        break;
-      case 1:
-        Navigator.pushReplacementNamed(context, '/search');
-        break;
-      case 2:
-        Navigator.pushReplacementNamed(context, '/library');
-        break;
-      case 3:
-        break;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -231,7 +210,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: Container(
         height: double.infinity,
         width: double.infinity,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
               Color.fromARGB(255, 29, 26, 57),
@@ -244,7 +223,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     child: Padding(
     padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
         child: isLoading
-            ? Center(child: CircularProgressIndicator())
+            ? const Center(child: CircularProgressIndicator())
             : SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -281,14 +260,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ],
                     ),
                   ),
-              SizedBox(height: 5),
+              const SizedBox(height: 5),
               TextButton(
                 onPressed: () {
                   setState(() {
                     _selectedAvatar = null;
                   });
                 },
-                child: Text(
+                child: const Text(
                   'Remove',
                   style: TextStyle(color: Colors.red, fontSize: 16),
                 ),
@@ -296,7 +275,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               SizedBox(height: screenHeight * 0.01),
               Row(
                 children: [
-                  Text(
+                  const Text(
                     'Username',
                     style: TextStyle(
                       color: Color.fromARGB(255, 243, 159, 89),
@@ -305,95 +284,69 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   IconButton(
-                    icon: Icon(Icons.edit, color: Colors.white),
+                    icon: const Icon(Icons.edit, color: Colors.white),
                     onPressed: () {
                       setState(() => isEditing = true);
                     },
                   ),
                 ],
               ),
-              SizedBox(height: 5),
+              const SizedBox(height: 5),
               isEditing
                   ? Column(
                 children: [
                   TextField(
                     controller: _usernameController,
-                    style: TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                       ),
-                        focusedBorder: OutlineInputBorder(
+                        focusedBorder: const OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.blueAccent),
                       ),
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   TextButton(
                     onPressed: updateUsername,
-                    child: Text('Save'),
+                    child: const Text('Save'),
                   ),
                 ],
               )
                   : Container(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
                       username,
-                      style: TextStyle(color: Colors.white, fontSize: 18),
+                      style: const TextStyle(color: Colors.white, fontSize: 18),
                     ),
               ),
-              SizedBox(height: 10),
-                  Text(
+              const SizedBox(height: 10),
+                  const Text(
                     'Email',
                     style: TextStyle(color: Color.fromARGB(255, 243, 159, 89), fontSize: 22, fontWeight: FontWeight.w900),
                   ),
-                  SizedBox(height: 5,),
-                  Text(email, style: TextStyle(color: Colors.white, fontSize: 20)),
-              SizedBox(height: 225),
+                  const SizedBox(height: 5,),
+                  Text(email, style: const TextStyle(color: Colors.white, fontSize: 20)),
+              const SizedBox(height: 225),
               TextButton(
                 onPressed: deleteAccount,
-                child: Text('Delete Account', style: TextStyle(color: Colors.red, fontSize: 20)),
+                child: const Text('Delete Account', style: TextStyle(color: Colors.red, fontSize: 20)),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: logout,
-                child: Text('Logout', style: TextStyle(fontSize: 20, color: Colors.white)),
-                style: ElevatedButton.styleFrom(backgroundColor: Color.fromARGB(255, 243, 159, 90),fixedSize: Size(50,50)),
+                style: ElevatedButton.styleFrom(backgroundColor: const Color.fromARGB(255, 243, 159, 90),fixedSize: const Size(50,50)),
+                child: const Text('Logout', style: TextStyle(fontSize: 20, color: Colors.white)),
               ),
             ],
           ),
         ),
       ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Color.fromARGB(255, 233, 188, 185),
-        selectedItemColor: Color.fromARGB(255, 0, 0, 0),
-        unselectedItemColor: Color.fromARGB(255, 158, 106, 106),
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.library_music),
-            label: 'Library',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-      )
     );
   }
 }

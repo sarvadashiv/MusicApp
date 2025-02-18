@@ -5,12 +5,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'openPlaylist.dart';
 
 class LibraryScreen extends StatefulWidget {
+  final VoidCallback onNavigateToSearch;
+  const LibraryScreen({super.key, required this.onNavigateToSearch});
+
   @override
   _LibraryScreenState createState() => _LibraryScreenState();
 }
 
 class _LibraryScreenState extends State<LibraryScreen> {
-  int _selectedIndex = 2;
   String? avatarUrl;
   List<dynamic> playlists = [];
   bool isLoading = true;
@@ -66,11 +68,11 @@ class _LibraryScreenState extends State<LibraryScreen> {
           playlists.removeWhere((playlist) => playlist['id'] == playlistId);
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Playlist deleted successfully!')),
+          const SnackBar(content: Text('Playlist deleted successfully!')),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to delete playlist')),
+          const SnackBar(content: Text('Failed to delete playlist')),
         );
       }
     } catch (e) {
@@ -86,7 +88,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Color.fromARGB(255, 29, 26, 57),
+          backgroundColor: const Color.fromARGB(255, 29, 26, 57),
           title: const Text(
             'Delete Playlist',
             style: TextStyle(color: Color.fromARGB(255, 243, 159, 89)),
@@ -119,28 +121,6 @@ class _LibraryScreenState extends State<LibraryScreen> {
   }
 
 
-  void _onItemTapped(int index) {
-    if (_selectedIndex == index) return;
-
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    switch (index) {
-      case 0:
-        Navigator.pushReplacementNamed(context, '/home');
-        break;
-      case 1:
-        Navigator.pushReplacementNamed(context, '/search');
-        break;
-      case 2:
-        break;
-      case 3:
-        Navigator.pushReplacementNamed(context, '/profile');
-        break;
-    }
-  }
-
   void _showCreatePlaylistDialog() {
     final TextEditingController playlistNameController = TextEditingController();
 
@@ -148,7 +128,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Color.fromARGB(255, 29, 26, 57),
+          backgroundColor: const Color.fromARGB(255, 29, 26, 57),
           title: const Text('Create New Playlist',style: TextStyle(color: Color.fromARGB(255, 243, 159, 89)),),
           content: TextField(
             controller: playlistNameController,
@@ -182,7 +162,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                     );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Failed to create playlist')),
+                      const SnackBar(content: Text('Failed to create playlist')),
                     );
                   }
                 }
@@ -198,10 +178,10 @@ class _LibraryScreenState extends State<LibraryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 29, 26, 57),
+      backgroundColor: const Color.fromARGB(255, 29, 26, 57),
       body: SafeArea(
         child: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [
                 Color.fromARGB(255, 29, 26, 57),
@@ -215,7 +195,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
           ),
           child: Column(
             children: [
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 child: Row(
@@ -224,7 +204,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                       radius: 25,
                       backgroundImage: avatarUrl != null ? AssetImage(avatarUrl!) : null,
                       child: avatarUrl == null
-                          ? Icon(Icons.person, size: 28, color: Colors.grey)
+                          ? const Icon(Icons.person, size: 28, color: Colors.grey)
                           : null,
                     ),
                     const SizedBox(width: 16),
@@ -232,21 +212,19 @@ class _LibraryScreenState extends State<LibraryScreen> {
                       'Your Library',
                       style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 243, 159, 89)),
                     ),
-                    Spacer(),
+                    const Spacer(),
                     IconButton(
-                      icon: Icon(Icons.search, size: 28, color: Color.fromARGB(255, 233, 188, 185)),
-                      onPressed: () {
-                        // Search functionality
-                      },
+                      icon: const Icon(Icons.search, size: 28, color: Color.fromARGB(255, 233, 188, 185)),
+                      onPressed: widget.onNavigateToSearch,
                     ),
                     IconButton(
-                      icon: Icon(Icons.add, size: 28, color: Color.fromARGB(255, 233, 188, 185)),
+                      icon: const Icon(Icons.add, size: 28, color: Color.fromARGB(255, 233, 188, 185)),
                       onPressed: _showCreatePlaylistDialog,
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: 15),
+              const SizedBox(height: 15),
               Expanded(
                   child: isLoading
                       ? const Center(
@@ -271,54 +249,56 @@ class _LibraryScreenState extends State<LibraryScreen> {
                         color: Colors.transparent,
                         elevation: 0,
                         margin: const EdgeInsets.symmetric(vertical: 2.0),
-                        child: ListTile(
-                          leading: Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              image: playlist['image'] != null
-                                  ? DecorationImage(
-                                image: NetworkImage(playlist['image']),
-                                fit: BoxFit.cover,
-                              )
-                                  : null,
-                              color: Colors.grey,
-                            ),
-                            child: playlist['image'] == null
-                                ? Icon(Icons.music_note, color: Colors.white)
-                                : null,
-                          ),
-                          title: Text(
-                            playlist['name'] ?? 'Unknown Playlist',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontFamily: 'KumbhSans',
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          subtitle: Text(
-                            '$songCount song(s)',
-                            style: const TextStyle(
-                              color: Colors.grey,
-                              fontFamily: 'KumbhSans',
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => OpenPlaylist(
-                                  playlistName: playlist['name'] ?? 'Unknown Playlist',
-                                  playlistDescription: playlist['description'] ?? '',
-                                  songs: playlist['songs'] ?? [],
-                                ),
-                              ),
-                            );
-                          },
+                        child: GestureDetector(
                           onLongPress: () {
                             _showDeleteConfirmationDialog(playlist['id'], playlist['name']);
                           },
+                          child: ListTile(
+                            leading: Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                image: playlist['image'] != null
+                                    ? DecorationImage(
+                                  image: NetworkImage(playlist['image']),
+                                  fit: BoxFit.cover,
+                                )
+                                    : null,
+                                color: Colors.grey,
+                              ),
+                              child: playlist['image'] == null
+                                  ? const Icon(Icons.music_note, color: Colors.white)
+                                  : null,
+                            ),
+                            title: Text(
+                              playlist['name'] ?? 'Unknown Playlist',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'KumbhSans',
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            subtitle: Text(
+                              '$songCount song(s)',
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontFamily: 'KumbhSans',
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => OpenPlaylist(
+                                    playlistName: playlist['name'] ?? 'Unknown Playlist',
+                                    playlistDescription: playlist['description'] ?? '',
+                                    songs: playlist['songs'] ?? [],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                         )
                       );
                     },
@@ -326,32 +306,6 @@ class _LibraryScreenState extends State<LibraryScreen> {
             ],
           ),
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Color.fromARGB(255, 233, 188, 185),
-        selectedItemColor: Colors.black,
-        unselectedItemColor: Color.fromARGB(255, 158, 106, 106),
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.library_music),
-            label: 'Library',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
       ),
     );
   }
